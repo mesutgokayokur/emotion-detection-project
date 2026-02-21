@@ -2,22 +2,25 @@ import requests
 import json
 
 def emotion_detector(text_to_analyze):
+    """
+    Watson NLP API'den gelen veriyi işleyerek formatlı bir sözlük döndürür.
+    """
     url = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
     header = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     myobj = { "raw_document": { "text": text_to_analyze } }
     
     response = requests.post(url, json=myobj, headers=header)
     
-    # JSON yanıtını ayrıştırıyoruz
+    # Yanıtı JSON formatına dönüştürme
     formatted_response = json.loads(response.text)
     
-    # Duygu değerlerini alıyoruz
+    # Duygu değerlerini içeren sözlüğü alma
     emotions = formatted_response['emotionPredictions'][0]['emotion']
     
-    # En baskın duyguyu (dominant_emotion) buluyoruz
+    # En yüksek skora sahip baskın duyguyu bulma
     dominant_emotion = max(emotions, key=emotions.get)
     
-    # İstenen formatta sözlük oluşturuyoruz
+    # Çıktıyı istenen formatta düzenleme
     result = {
         'anger': emotions['anger'],
         'disgust': emotions['disgust'],
